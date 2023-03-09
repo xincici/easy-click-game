@@ -1,12 +1,12 @@
 <template>
   <div class="wrapper">
-    <h2>Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
-    <p>total click: {{ clickCount }}</p>
+    <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
+    <p>Available Clicks: {{ maxClick - clickCount }}</p>
     <p>
-      <em @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_ROW}">-</em>
+      <button @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_ROW}">--</button>
       {{ difficulty }}
-      <em @click="e => changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_ROW}">+</em>
-      <em @click="initGame" class="reset-icon">Reset</em>
+      <button @click="e => changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_ROW}">+</button>
+      <button @click="initGame" class="reset-icon">Reset</button>
     </p>
     <div class="game-area">
       <div class="row" v-for="(item, idx_row) in gameData" :key="idx_row">
@@ -35,7 +35,7 @@ const difficulty = ref(INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
 
-const randomOnce = () => [Math.floor(Math.random() * difficulty.value), Math.floor(Math.random() * difficulty.value)];
+const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
 
 let gameData;
@@ -43,7 +43,7 @@ initGame();
 
 function randomSomeOperations() {
   for (let i = 0; i < difficulty.value - 2 << 1; i++) {
-    const [row, col] = randomOnce();
+    const [row, col] = randomOnce(difficulty.value);
     onCellClick(row, col);
     if (Math.random() < 0.5) {
       onCellClick(row, col);
@@ -127,11 +127,13 @@ function checkResult() {
     display: inline-block;
     border: 1px solid #e1e1e1;
     padding: 2px;
-    width: 20px;
+    width: 25px;
+    height: 30px;
     margin: 0 4px;
     text-align: center;
     font-style: normal;
     font-weight: bold;
+    letter-spacing: -1.2px;
     &.disable {
       color: #e1e1e1;
     }
@@ -139,7 +141,10 @@ function checkResult() {
   .reset-icon {
     margin-left: 10px;
     width: 50px;
-    font-weight: normal;
+    font-weight: bold;
+    background: #ee5555;
+    color: #fff;
+    letter-spacing: normal;
   }
   .row {
     .cell {
