@@ -3,19 +3,19 @@
     <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
     <p>Available Clicks: {{ maxClick - clickCount }}</p>
     <p>
-      <button @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_ROW}">--</button>
+      <button @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
       {{ difficulty }}
-      <button @click="e => changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_ROW}">+</button>
+      <button @click="e => changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
       <button @click="initGame" class="reset-icon">Reset</button>
     </p>
-    <div class="game-area">
-      <div class="row" v-for="(item, idx_row) in gameData" :key="idx_row">
+    <div class="game-area" :class="`cell-${level}`">
+      <div v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
           <button class="inner" :class="{zero: cell === 0}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
         </div>
       </div>
-      <div v-if="gameResult === WIN" class="win">🎉🎉 You Win 🎉🎉</div>
-      <div v-if="gameResult === LOSE" class="lose">👻👻 You Lose 👻👻</div>
+      <div v-if="gameResult === WIN" class="win">🎉🎉🎉 You Win 🎉🎉🎉</div>
+      <div v-if="gameResult === LOSE" class="lose">👻👻👻 You Lose 👻👻👻</div>
     </div>
   </div>
 </template>
@@ -23,10 +23,11 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 const BIG_VAL = 3;
-const INIT_DIFFICULTY = 5;
-const MIN_ROW = 4;
-const MAX_ROW = 10;
+const INIT_DIFFICULTY = 6;
+const MIN_DIFFICULTY = 4;
+const MAX_DIFFICULTY = 10;
 const [GAMING, WIN, LOSE] = [0, 1, 2];
+const [SMALL, MIDDLE, LARGE] = ['small', 'middle', 'large'];
 const alert = msg => window.alert(msg);
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -34,6 +35,7 @@ const clickCount = ref(0);
 const difficulty = ref(INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
+const level = computed(() => difficulty.value <= 5 ? LARGE : difficulty.value <= 7 ? MIDDLE : SMALL);
 
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
@@ -42,7 +44,7 @@ let gameData;
 initGame();
 
 function randomSomeOperations() {
-  for (let i = 0; i < difficulty.value - 2 << 1; i++) {
+  for (let i = 0; i < difficulty.value - 1 << 1; i++) {
     const [row, col] = randomOnce(difficulty.value);
     onCellClick(row, col);
     if (Math.random() < 0.5) {
@@ -51,7 +53,7 @@ function randomSomeOperations() {
   }
 }
 function changeDifficulty(diff) {
-  if (difficulty.value === MIN_ROW && diff < 0 || difficulty.value === MAX_ROW && diff > 0) return;
+  if (difficulty.value === MIN_DIFFICULTY && diff < 0 || difficulty.value === MAX_DIFFICULTY && diff > 0) return;
   difficulty.value += diff;
   initGame();
 }
@@ -99,29 +101,6 @@ function checkResult() {
     border: 1px solid #aa1111;
     border-radius: 50%;
   }
-  .game-area {
-    display: inline-block;
-    position: relative;
-    padding: 8px;
-    .win,.lose {
-      background-color: #e1e1e1;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      left: 0;
-      top: 0;
-      opacity: 0.85;
-      font-weight: bold;
-      color: #11aa11;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .lose {
-      color: #aa1111;
-    }
-  }
   .opt-icon,.reset-icon {
     cursor: pointer;
     display: inline-block;
@@ -146,16 +125,37 @@ function checkResult() {
     color: #fff;
     letter-spacing: normal;
   }
-  .row {
+  .game-area {
+    display: inline-block;
+    position: relative;
+    padding: 8px;
+    .win,.lose {
+      background-color: #f1f1f1;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      opacity: 0.95;
+      font-weight: bold;
+      color: #11aa11;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lose {
+      color: #aa1111;
+    }
     .cell {
       display: inline-block;
       margin: 2px;
       .inner {
         cursor: pointer;
         display: block;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
         border: 1px solid #e1e1e1;
         font-size: 16px;
         font-weight: bold;
@@ -164,6 +164,16 @@ function checkResult() {
           background-color: #ddffdd;
         }
       }
+    }
+    &.cell-middle .cell .inner {
+      width: 44px;
+      height: 44px;
+      line-height: 44px;
+    }
+    &.cell-small .cell .inner {
+      width: 38px;
+      height: 38px;
+      line-height: 38px;
     }
   }
 }
