@@ -1,6 +1,6 @@
 <template>
-  <h2>Click Game <span title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
   <div class="wrapper">
+    <h2>Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
     <p>total click: {{ clickCount }}</p>
     <p>
       <em @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_ROW}">-</em>
@@ -11,26 +11,29 @@
     <div class="game-area">
       <div class="row" v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
-          <span class="inner" :class="{zero: cell === 0}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</span>
+          <button class="inner" :class="{zero: cell === 0}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
         </div>
       </div>
-      <div v-if="gameResult" class="win">🎉🎉 You Win 🎉🎉</div>
+      <div v-if="gameResult === WIN" class="win">🎉🎉 You Win 🎉🎉</div>
+      <div v-if="gameResult === LOSE" class="lose">👻👻 You Lose 👻👻</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 const BIG_VAL = 3;
 const INIT_DIFFICULTY = 5;
 const MIN_ROW = 4;
 const MAX_ROW = 10;
+const [GAMING, WIN, LOSE] = [0, 1, 2];
 const alert = msg => window.alert(msg);
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
 const difficulty = ref(INIT_DIFFICULTY);
-const gameResult = ref(false);
+const gameResult = ref(GAMING);
+const maxClick = computed(() => Math.pow(difficulty.value, 2));
 
 const randomOnce = () => [Math.floor(Math.random() * difficulty.value), Math.floor(Math.random() * difficulty.value)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
@@ -55,7 +58,7 @@ function changeDifficulty(diff) {
 function initGame() {
   gameData = reactive(randomData(difficulty.value));
   randomSomeOperations();
-  gameResult.value = false;
+  gameResult.value = GAMING;
   clickCount.value = 0;
 }
 function onCellClick(row, col) {
@@ -69,6 +72,9 @@ function onCellClick(row, col) {
     gameData[iRow][iCol] = (gameData[iRow][iCol] + 1) % BIG_VAL;
   });
   checkResult();
+  if (clickCount.value === maxClick.value && gameResult.value !== WIN) {
+    gameResult.value = LOSE;
+  }
 }
 function checkResult() {
   for (let i = 0; i < difficulty.value; i++) {
@@ -76,7 +82,7 @@ function checkResult() {
       if (gameData[i][j] !== 0) return;
     }
   }
-  gameResult.value = true;
+  gameResult.value = WIN;
 }
 
 </script>
@@ -84,11 +90,20 @@ function checkResult() {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .wrapper {
+  .help {
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #aa1111;
+    border-radius: 50%;
+  }
   .game-area {
     display: inline-block;
     position: relative;
     padding: 8px;
-    .win {
+    .win,.lose {
       background-color: #e1e1e1;
       position: absolute;
       width: 100%;
@@ -102,6 +117,9 @@ function checkResult() {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .lose {
+      color: #aa1111;
     }
   }
   .opt-icon,.reset-icon {
@@ -126,16 +144,16 @@ function checkResult() {
   .row {
     .cell {
       display: inline-block;
-      border: 1px solid #e1e1e1;
-      cursor: pointer;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      font-size: 16px;
-      font-weight: bold;
       margin: 2px;
       .inner {
+        cursor: pointer;
         display: block;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #e1e1e1;
+        font-size: 16px;
+        font-weight: bold;
         background-color: #eeeeee;
         &.zero {
           background-color: #ddffdd;
