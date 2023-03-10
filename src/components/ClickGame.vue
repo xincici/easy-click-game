@@ -3,9 +3,9 @@
     <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
     <p>Available Clicks: {{ maxClick - clickCount }}</p>
     <p>
-      <button @click="e => changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
+      <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
       {{ difficulty }}
-      <button @click="e => changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
+      <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
       <button @click="initGame" class="reset-icon">Reset</button>
     </p>
     <div class="game-area" :class="`cell-${level}`">
@@ -92,6 +92,9 @@ function checkResult() {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .wrapper {
+  button {
+    touch-action: manipulation;
+  }
   .help {
     cursor: pointer;
     font-size: 16px;
