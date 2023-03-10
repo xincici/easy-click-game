@@ -153,9 +153,9 @@ function checkResult() {
       .inner {
         cursor: pointer;
         display: block;
-        width: 50px;
-        height: 50px;
-        line-height: 50px;
+        width: 44px;
+        height: 44px;
+        line-height: 44px;
         border: 1px solid #e1e1e1;
         font-size: 16px;
         font-weight: bold;
@@ -164,6 +164,15 @@ function checkResult() {
           background-color: #ddffdd;
         }
       }
+    }
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .wrapper .game-area {
+    &.cell-large .cell .inner {
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
     }
     &.cell-middle .cell .inner {
       width: 44px;
@@ -175,13 +184,11 @@ function checkResult() {
       height: 38px;
       line-height: 38px;
     }
-    &.cell-mini .cell {
-      margin: 1px;
-    }
     &.cell-mini .cell .inner {
-      width: 32px;
-      height: 32px;
-      line-height: 32px;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      font-size: 13px;
     }
   }
 }
