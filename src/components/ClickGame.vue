@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
-    <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">❓</span></h2>
-    <p>Available Clicks: {{ maxClick - clickCount }}</p>
+    <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">?</span></h2>
+    <p>Best Score: {{ bestScore || '--' }} 🍔 Available Clicks: {{ maxClick - clickCount }}</p>
     <p>
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
       {{ difficulty }}
@@ -14,20 +14,21 @@
           <button class="inner" :class="{zero: cell === 0}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
         </div>
       </div>
-      <div v-if="gameResult === WIN" class="win">🎉🎉🎉 You Win 🎉🎉🎉</div>
-      <div v-if="gameResult === LOSE" class="lose">👻👻👻 You Lose 👻👻👻</div>
+      <div v-if="gameResult === WIN" class="win">🎉🎉 You Win 🎉🎉</div>
+      <div v-if="gameResult === LOSE" class="lose">👻👻 You Lose 👻👻</div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 const BIG_VAL = 3;
 const INIT_DIFFICULTY = 6;
 const MIN_DIFFICULTY = 3;
 const MAX_DIFFICULTY = 10;
 const [GAMING, WIN, LOSE] = [0, 1, 2];
 const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
+const BEST_STORAGE_KEY = '__easy_click_game__';
 const alert = msg => window.alert(msg);
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -36,6 +37,14 @@ const difficulty = ref(INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
 const level = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
+const bestScore = ref(localStorage.getItem(`${BEST_STORAGE_KEY}${difficulty.value}`));
+
+watch(difficulty, () => {
+  bestScore.value = localStorage.getItem(`${BEST_STORAGE_KEY}${difficulty.value}`);
+});
+watch(gameResult, val => {
+  if (val === WIN) updateBestScore();
+});
 
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
@@ -43,6 +52,12 @@ const randomData = length => Array.from({ length }, () => Array.from({ length },
 let gameData;
 initGame();
 
+function initGame() {
+  gameData = reactive(randomData(difficulty.value));
+  randomSomeOperations();
+  gameResult.value = GAMING;
+  clickCount.value = 0;
+}
 function randomSomeOperations() {
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
     const [row, col] = randomOnce(difficulty.value);
@@ -57,11 +72,12 @@ function changeDifficulty(diff) {
   difficulty.value += diff;
   initGame();
 }
-function initGame() {
-  gameData = reactive(randomData(difficulty.value));
-  randomSomeOperations();
-  gameResult.value = GAMING;
-  clickCount.value = 0;
+function updateBestScore() {
+  const score = maxClick.value - clickCount.value;
+  if (!bestScore.value || bestScore.value < score) {
+    localStorage.setItem(`${BEST_STORAGE_KEY}${difficulty.value}`, score);
+    bestScore.value = score;
+  }
 }
 function onCellClick(row, col) {
   clickCount.value++;
@@ -102,6 +118,7 @@ function checkResult() {
     width: 20px;
     height: 20px;
     border: 1px solid #aa1111;
+    color: #aa1111;
     border-radius: 50%;
   }
   .opt-icon,.reset-icon {
