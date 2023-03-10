@@ -24,10 +24,10 @@
 import { ref, reactive, computed } from 'vue';
 const BIG_VAL = 3;
 const INIT_DIFFICULTY = 6;
-const MIN_DIFFICULTY = 4;
+const MIN_DIFFICULTY = 3;
 const MAX_DIFFICULTY = 10;
 const [GAMING, WIN, LOSE] = [0, 1, 2];
-const [SMALL, MIDDLE, LARGE] = ['small', 'middle', 'large'];
+const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
 const alert = msg => window.alert(msg);
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -35,7 +35,7 @@ const clickCount = ref(0);
 const difficulty = ref(INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
-const level = computed(() => difficulty.value <= 5 ? LARGE : difficulty.value <= 7 ? MIDDLE : SMALL);
+const level = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
 
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
@@ -112,7 +112,7 @@ function checkResult() {
     text-align: center;
     font-style: normal;
     font-weight: bold;
-    letter-spacing: -1.2px;
+    letter-spacing: -3px;
     &.disable {
       color: #e1e1e1;
     }
@@ -174,6 +174,14 @@ function checkResult() {
       width: 38px;
       height: 38px;
       line-height: 38px;
+    }
+    &.cell-mini .cell {
+      margin: 1px;
+    }
+    &.cell-mini .cell .inner {
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
     }
   }
 }
