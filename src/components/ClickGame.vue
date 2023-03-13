@@ -11,10 +11,14 @@
     <div class="game-area" :class="`cell-${level}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
-          <button class="inner" :class="{zero: cell === 0}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
+          <div class="mask" v-show="maskData[idx_row][idx_col] === 0"></div>
+          <button class="inner" :class="{zero: cell === 0, one: cell === 1, two: cell === 2}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
         </div>
       </div>
-      <div v-if="gameResult === WIN" class="win">🎉🎉 You Win 🎉🎉</div>
+      <div v-if="gameResult >= WIN" class="win">
+        <span>🎉🎉 You Win 🎉🎉</span>
+        <span v-if="gameResult === NB">New Best Score</span>
+      </div>
       <div v-if="gameResult === LOSE" class="lose">👻👻 You Lose 👻👻</div>
     </div>
   </div>
@@ -26,7 +30,7 @@ const BIG_VAL = 3;
 const INIT_DIFFICULTY = 6;
 const MIN_DIFFICULTY = 3;
 const MAX_DIFFICULTY = 10;
-const [GAMING, WIN, LOSE] = [0, 1, 2];
+const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
 const BEST_STORAGE_KEY = '__easy_click_game__';
 const alert = msg => window.alert(msg);
@@ -49,14 +53,21 @@ watch(gameResult, val => {
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
 
-let gameData;
+let gameData, maskData;
+let animationFrameId = null;
 initGame();
 
 function initGame() {
   gameData = reactive(randomData(difficulty.value));
+  maskData = reactive(randomData(difficulty.value));
   randomSomeOperations();
   gameResult.value = GAMING;
   clickCount.value = 0;
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+  hoverMask(0);
 }
 function randomSomeOperations() {
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
@@ -65,6 +76,16 @@ function randomSomeOperations() {
     if (Math.random() < 0.5) {
       onCellClick(row, col);
     }
+  }
+}
+function hoverMask(idx) {
+  const row = ~~(idx / difficulty.value);
+  const col = idx % difficulty.value;
+  maskData[row][col] = 1;
+  if (idx + 1 < difficulty.value * difficulty.value) {
+    animationFrameId = requestAnimationFrame(() => {
+      hoverMask(idx + 1);
+    });
   }
 }
 function changeDifficulty(diff) {
@@ -77,6 +98,7 @@ function updateBestScore() {
   if (!bestScore.value || bestScore.value < score) {
     localStorage.setItem(`${BEST_STORAGE_KEY}${difficulty.value}`, score);
     bestScore.value = score;
+    gameResult.value = NB;
   }
 }
 function onCellClick(row, col) {
@@ -161,6 +183,7 @@ function checkResult() {
       color: #11aa11;
       font-size: 18px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
     }
@@ -170,18 +193,30 @@ function checkResult() {
     .cell {
       display: inline-block;
       margin: 2px;
+      position: relative;
+      .mask {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 1;
+        background: #ccc;
+      }
       .inner {
         cursor: pointer;
         display: block;
         width: 44px;
         height: 44px;
         line-height: 44px;
+        padding: 0;
         border: 1px solid #e1e1e1;
         font-size: 16px;
         font-weight: bold;
-        background-color: #eeeeee;
+        background-color: #f5f5f5;
         &.zero {
           background-color: #ddffdd;
+        }
+        &.two {
+          background-color: #e5e5e5;
         }
       }
     }
