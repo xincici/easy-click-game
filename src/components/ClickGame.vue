@@ -71,7 +71,7 @@ function initGame() {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
   }
-  hoverMask(0);
+  toggleMask(0);
 }
 function showHelp() {
   window.alert(i18n('helpMsg'));
@@ -85,13 +85,13 @@ function randomSomeOperations() {
     }
   }
 }
-function hoverMask(idx) {
+function toggleMask(idx) {
   const row = ~~(idx / difficulty.value);
   const col = idx % difficulty.value;
   maskData[row][col] = 1;
   if (idx + 1 < difficulty.value * difficulty.value) {
     animationFrameId = requestAnimationFrame(() => {
-      hoverMask(idx + 1);
+      toggleMask(idx + 1);
     });
   }
 }
