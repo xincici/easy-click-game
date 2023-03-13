@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <p class="lang-toggle"><Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" /></p>
-    <h2><span class="title">{{ i18n('gameTitle') }}</span> <span class="help" :title="i18n('helpTip')" @click="showHelp()">?</span></h2>
+    <h2><span class="title">{{ i18n('gameTitle') }}</span> <span class="help" :title="i18n('helpTip')" @click="helpShow = true"><font-awesome-icon icon="fa-solid fa-circle-question" /></span></h2>
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <p>
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
@@ -9,7 +9,7 @@
       <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
       <button @click="initGame" class="reset-icon">{{ i18n('start') }}</button>
     </p>
-    <div class="game-area" :class="`cell-${level}`">
+    <div class="game-area" :class="`cell-${cellSize}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
           <div class="mask" v-show="maskData[idx_row][idx_col] === 0"></div>
@@ -22,11 +22,29 @@
       </div>
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
     </div>
+    <div class="help-wrapper" v-show="helpShow">
+      <Transition name="inner">
+        <div class="help-inner" v-if="helpShow">
+          <div class="help-content">
+            <p class="help-icon"><font-awesome-icon icon="fa-solid fa-circle-question" /></p>
+            <p class="help-text">{{ i18n('helpMsg') }}</p>
+            <ul class="help-list">
+              <li>1. {{ i18n('help1') }}</li>
+              <li>2. {{ i18n('help2') }}</li>
+              <li>3. {{ i18n('help3') }}</li>
+            </ul>
+          </div>
+          <div class="help-button">
+            <button @click="helpShow = false">{{ i18n('confirmText') }}</button>
+          </div>
+        </div>
+      </Transition>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue';
+import { ref, reactive, computed, watch, watchEffect } from 'vue';
 import Toggle from '@vueform/toggle';
 import '@vueform/toggle/themes/default.css';
 import { i18n, language } from './i18n';
@@ -37,18 +55,19 @@ const MIN_DIFFICULTY = 3;
 const MAX_DIFFICULTY = 10;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
-const BEST_STORAGE_KEY = '__easy_click_game__';
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
 const difficulty = ref(INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
+const helpShow = ref(false);
+const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
-const level = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
-const bestScore = ref(localStorage.getItem(`${BEST_STORAGE_KEY}${difficulty.value}`));
+const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
+const bestScore = ref(localStorage.getItem(storageKey.value));
 
-watch(difficulty, () => {
-  bestScore.value = localStorage.getItem(`${BEST_STORAGE_KEY}${difficulty.value}`);
+watchEffect(() => {
+  bestScore.value = localStorage.getItem(storageKey.value);
 });
 watch(gameResult, val => {
   if (val === WIN) updateBestScore();
@@ -72,9 +91,6 @@ function initGame() {
     animationFrameId = null;
   }
   toggleMask(0);
-}
-function showHelp() {
-  window.alert(i18n('helpMsg'));
 }
 function randomSomeOperations() {
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
@@ -103,7 +119,7 @@ function changeDifficulty(diff) {
 function updateBestScore() {
   const score = maxClick.value - clickCount.value;
   if (!bestScore.value || bestScore.value < score) {
-    localStorage.setItem(`${BEST_STORAGE_KEY}${difficulty.value}`, score);
+    localStorage.setItem(storageKey.value, score);
     bestScore.value = score;
     gameResult.value = NB;
   }
@@ -150,12 +166,8 @@ function checkResult() {
   }
   .help {
     cursor: pointer;
-    font-size: 16px;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #aa1111;
-    color: #aa1111;
-    border-radius: 50%;
+    font-size: 20px;
+    color: #cc3333;
   }
   .opt-icon,.reset-icon {
     cursor: pointer;
@@ -235,6 +247,58 @@ function checkResult() {
       }
     }
   }
+  .inner-enter-from {
+    scale: 0.1;
+  }
+  .inner-enter-active {
+    transition: scale 0.16s ease-in-out;
+  }
+  .inner-enter-to {
+    scale: 1;
+  }
+  .help-wrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    background: rgba(0,0,0,.85);
+    .help-inner {
+      position: fixed;
+      z-index: 1001;
+      top: 50%;
+      left: 50%;
+      text-align: left;
+      width: 720px;
+      transform: translate(-50%, -60%);
+      margin: 0;
+      .help-icon {
+        text-align: center;
+        font-size: 40px;
+        color: #e22;
+      }
+      .help-text {
+        color: #eee;
+      }
+      .help-list {
+        list-style: none;
+        padding: 10px;
+        color: #fff;
+      }
+      .help-button {
+        text-align: right;
+        button {
+          cursor: pointer;
+          padding: 10px 20px;
+          color: #fff;
+          background: #11aa11;
+          border: 0 none;
+          font-weight: bold;
+        }
+      }
+    }
+  }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   .wrapper .game-area {
@@ -259,6 +323,9 @@ function checkResult() {
       line-height: 28px;
       font-size: 13px;
     }
+  }
+  .wrapper .help-wrapper .help-inner {
+    max-width: 88%;
   }
 }
 </style>
