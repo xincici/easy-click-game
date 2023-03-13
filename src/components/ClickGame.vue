@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <p class="lang-toggle"><Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" /></p>
-    <h2>Easy Click Game <span class="help" :title="i18n('helpTip')" @click="showHelp()">?</span></h2>
+    <h2><span class="title">{{ i18n('gameTitle') }}</span> <span class="help" :title="i18n('helpTip')" @click="showHelp()">?</span></h2>
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <p>
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
@@ -144,10 +144,13 @@ function checkResult() {
     margin: 0 5%;
     text-align: right;
   }
+  .title,.help {
+    vertical-align: middle;
+    display: inline-block;
+  }
   .help {
     cursor: pointer;
     font-size: 16px;
-    display: inline-block;
     width: 20px;
     height: 20px;
     border: 1px solid #aa1111;
