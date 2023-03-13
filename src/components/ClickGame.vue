@@ -1,12 +1,13 @@
 <template>
   <div class="wrapper">
-    <h2>Easy Click Game <span class="help" title="make them all 0 to win!" @click="alert('make them all 0 to win!')">?</span></h2>
-    <p>Best Score: {{ bestScore || '--' }} 🍔 Available Clicks: {{ maxClick - clickCount }}</p>
+    <p class="lang-toggle"><Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" /></p>
+    <h2>Easy Click Game <span class="help" :title="i18n('helpTip')" @click="showHelp()">?</span></h2>
+    <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <p>
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
       {{ difficulty }}
       <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
-      <button @click="initGame" class="reset-icon">Reset</button>
+      <button @click="initGame" class="reset-icon">{{ i18n('start') }}</button>
     </p>
     <div class="game-area" :class="`cell-${level}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
@@ -16,16 +17,20 @@
         </div>
       </div>
       <div v-if="gameResult >= WIN" class="win">
-        <span>🎉🎉 You Win 🎉🎉</span>
-        <span v-if="gameResult === NB">New Best Score</span>
+        <span>🎉🎉 {{ i18n('tipWin') }} 🎉🎉</span>
+        <span v-if="gameResult === NB">{{ i18n('newBest') }}</span>
       </div>
-      <div v-if="gameResult === LOSE" class="lose">👻👻 You Lose 👻👻</div>
+      <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, watch } from 'vue';
+import Toggle from '@vueform/toggle';
+import '@vueform/toggle/themes/default.css';
+import { i18n, language } from './i18n';
+
 const BIG_VAL = 3;
 const INIT_DIFFICULTY = 6;
 const MIN_DIFFICULTY = 3;
@@ -33,7 +38,6 @@ const MAX_DIFFICULTY = 10;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
 const BEST_STORAGE_KEY = '__easy_click_game__';
-const alert = msg => window.alert(msg);
 
 const neighbours = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
@@ -68,6 +72,9 @@ function initGame() {
     animationFrameId = null;
   }
   hoverMask(0);
+}
+function showHelp() {
+  window.alert(i18n('helpMsg'));
 }
 function randomSomeOperations() {
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
@@ -132,6 +139,10 @@ function checkResult() {
 .wrapper {
   button {
     touch-action: manipulation;
+  }
+  .lang-toggle {
+    margin: 0 5%;
+    text-align: right;
   }
   .help {
     cursor: pointer;
