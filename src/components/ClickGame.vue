@@ -258,6 +258,7 @@ function checkResult() {
         font-size: 16px;
         font-weight: bold;
         background-color: #f5f5f5;
+        color: #222;
         &.zero {
           background-color: #ddffdd;
         }
