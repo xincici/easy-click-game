@@ -46,7 +46,7 @@ defineProps(['helpShow', 'hideHelp']);
   left: 0;
   top: 0;
   box-sizing: border-box;
-  background: rgba(0,0,0,.85);
+  background: rgba(0, 0, 0, .85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,7 +73,7 @@ defineProps(['helpShow', 'hideHelp']);
         cursor: pointer;
         padding: 10px 20px;
         color: #fff;
-        background: #11aa11;
+        background: rgba(60, 160, 60, 0.9);
         border: 0 none;
         font-weight: bold;
       }

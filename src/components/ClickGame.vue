@@ -146,12 +146,22 @@ function checkResult() {
   width: 100vw;
   height: 100vh;
   padding-top: 40px;
+  color: #2c3e50;
   &.dark {
     background: rgba(0, 0, 0, 0.85);
     color: #eee;
     .game-area {
       .win,.lose {
         background-color: #333;
+      }
+      .cell .inner {
+        background: rgba(160, 160, 160, 0.90);
+        &.two {
+          background: rgba(125, 125, 125, 0.90);
+        }
+        &.zero {
+          background: rgba(210, 210, 210, 0.90);
+        }
       }
     }
   }
@@ -198,7 +208,7 @@ function checkResult() {
     margin-left: 10px;
     width: 50px;
     font-weight: bold;
-    background: #ee5555;
+    background: rgba(60, 160, 60, 0.9);
     color: #fff;
     letter-spacing: normal;
     border: 0 none;
@@ -206,7 +216,7 @@ function checkResult() {
   .game-area {
     display: inline-block;
     position: relative;
-    padding: 10px;
+    padding: 12px;
     .win,.lose {
       background-color: #f1f1f1;
       position: absolute;
