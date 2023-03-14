@@ -23,7 +23,6 @@
 
 <script setup>
 import { defineProps } from 'vue';
-import { i18n } from './i18n';
 import { theme } from './theme';
 
 defineProps(['helpShow', 'hideHelp']);

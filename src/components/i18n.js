@@ -39,9 +39,18 @@ const langs = {
 };
 
 export const language = ref(localStorage.getItem(STORAGE_KEY) || 'en');
-export const i18n = key => langs[language.value][key];
 
 watchEffect(() => {
-  document.title = i18n('gameTitle');
+  document.title = langs[language.value]['gameTitle'];
   localStorage.setItem(STORAGE_KEY, language.value);
 });
+
+export default {
+  install: app => {
+    app.config.globalProperties.i18n = fullKey => {
+      return fullKey.split('.').reduce((obj, key) => {
+        if (obj) return obj[key];
+      }, langs[language.value]);
+    };
+  }
+}

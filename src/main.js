@@ -1,19 +1,22 @@
-import { createApp } from 'vue'
+import { createApp } from 'vue';
 
 /* import the fontawesome core */
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library } from '@fortawesome/fontawesome-svg-core';
 
 /* import font awesome icon component */
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 /* import specific icons */
-import { fas } from '@fortawesome/free-solid-svg-icons'
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 /* add icons to the library */
-library.add(fas)
+library.add(fas);
 
-import App from './App.vue'
+import i18n from './components/i18n';
+
+import App from './App.vue';
 
 createApp(App)
   .component('font-awesome-icon', FontAwesomeIcon)
-  .mount('#app')
+  .use(i18n)
+  .mount('#app');

@@ -34,7 +34,7 @@ import { ref, reactive, computed, watch, watchEffect } from 'vue';
 import Toggle from '@vueform/toggle';
 import '@vueform/toggle/themes/default.css';
 import HelpDialog from './HelpDialog.vue';
-import { i18n, language } from './i18n';
+import { language } from './i18n';
 import { theme } from './theme';
 
 const BIG_VAL = 3;
@@ -145,7 +145,8 @@ function checkResult() {
 .wrapper {
   width: 100vw;
   height: 100vh;
-  padding-top: 40px;
+  padding: 40px 0;
+  box-sizing: border-box;
   color: #2c3e50;
   &.dark {
     background: rgba(0, 0, 0, 0.85);
