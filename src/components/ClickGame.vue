@@ -36,18 +36,14 @@ import '@vueform/toggle/themes/default.css';
 import HelpDialog from './HelpDialog.vue';
 import { language } from './i18n';
 import { theme } from './theme';
+import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from './difficulty';
 
 const BIG_VAL = 3;
-const INIT_DIFFICULTY = 6;
-const MIN_DIFFICULTY = 3;
-const MAX_DIFFICULTY = 10;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
 
-const difficultyStorageKey = '__easy_click_game__difficulty';
 const neighbours = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
-const difficulty = ref(+localStorage.getItem(difficultyStorageKey) || INIT_DIFFICULTY);
 const gameResult = ref(GAMING);
 const helpShow = ref(false);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
@@ -55,22 +51,19 @@ const maxClick = computed(() => Math.pow(difficulty.value, 2));
 const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
 const bestScore = ref(localStorage.getItem(storageKey.value));
 
-watchEffect(() => {
-  bestScore.value = localStorage.getItem(storageKey.value);
-});
-watchEffect(() => {
-  localStorage.setItem(difficultyStorageKey, difficulty.value);
-});
-watch(gameResult, val => {
-  if (val === WIN) updateBestScore();
-});
+let gameData, maskData;
+let animationFrameId = null;
 
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
 
-let gameData, maskData;
-let animationFrameId = null;
-initGame();
+watchEffect(() => {
+  bestScore.value = localStorage.getItem(storageKey.value);
+});
+watch(difficulty, initGame, { immediate: true });
+watch(gameResult, val => {
+  if (val === WIN) updateBestScore();
+});
 
 function initGame() {
   gameData = reactive(randomData(difficulty.value));
@@ -102,11 +95,6 @@ function toggleMask(idx) {
       toggleMask(idx + 1);
     });
   }
-}
-function changeDifficulty(diff) {
-  if (difficulty.value === MIN_DIFFICULTY && diff < 0 || difficulty.value === MAX_DIFFICULTY && diff > 0) return;
-  difficulty.value += diff;
-  initGame();
 }
 function updateBestScore() {
   const score = maxClick.value - clickCount.value;

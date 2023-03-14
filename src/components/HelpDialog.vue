@@ -22,10 +22,11 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 import { theme } from './theme';
 
-defineProps(['helpShow', 'hideHelp']);
+defineProps(['helpShow']);
+defineEmits(['hideHelp']);
 </script>
 
 <style scoped lang="scss">
