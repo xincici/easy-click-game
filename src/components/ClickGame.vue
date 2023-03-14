@@ -132,7 +132,7 @@ function checkResult() {
 <style scoped lang="scss">
 .wrapper {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   padding: 40px 0;
   box-sizing: border-box;
   color: #2c3e50;
