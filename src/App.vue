@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-import ClickGame from './components/ClickGame.vue'
+import ClickGame from './components/ClickGame.vue';
 </script>
 
 <style lang="scss">
