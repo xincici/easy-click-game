@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper" :class="theme">
     <p class="toggle-wrapper">
-      <Toggle v-model="theme" trueValue="dark" falseValue="light" onLabel="🌙" offLabel="🌝" class="theme-toggle" />
+      <Toggle v-model="audioPlay" trueValue="play" falseValue="pause" onLabel="🔊" offLabel="🔇" class="mr20" />
+      <Toggle v-model="theme" trueValue="dark" falseValue="light" onLabel="🌙" offLabel="🌝" class="theme-toggle mr20" />
       <Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" />
     </p>
     <h2><span class="title">{{ i18n('gameTitle') }}</span> <span class="help" :title="i18n('helpTip')" @click="helpShow = true"><font-awesome-icon icon="fa-solid fa-circle-question" /></span></h2>
@@ -26,13 +27,15 @@
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
     </div>
     <HelpDialog :help-show="helpShow" @hideHelp="helpShow = false" />
+    <audio :src="audio" ref="audioRef" loop="true"></audio>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, watchEffect } from 'vue';
+import { ref, reactive, computed, watch, watchEffect, onMounted } from 'vue';
 import Toggle from '@vueform/toggle';
 import '@vueform/toggle/themes/default.css';
+import audio from '../assets/yzcw.mp3';
 import HelpDialog from './HelpDialog.vue';
 import { language } from './i18n';
 import { theme } from './theme';
@@ -46,6 +49,8 @@ const neighbours = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
 const gameResult = ref(GAMING);
 const helpShow = ref(false);
+const audioPlay = ref(false);
+const audioRef = ref(null);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
 const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
@@ -63,6 +68,12 @@ watchEffect(() => {
 watch(difficulty, initGame, { immediate: true });
 watch(gameResult, val => {
   if (val === WIN) updateBestScore();
+});
+onMounted(() => {
+  watch(audioPlay, val => {
+    if (val === 'play') audioRef.value.play();
+    else audioRef.value.pause();
+  });
 });
 
 function initGame() {
@@ -157,7 +168,7 @@ function checkResult() {
   button {
     touch-action: manipulation;
   }
-  .theme-toggle {
+  .mr20 {
     margin-right: 20px;
   }
   ::v-deep .theme-toggle .toggle-on {
