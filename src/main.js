@@ -20,3 +20,11 @@ createApp(App)
   .component('font-awesome-icon', FontAwesomeIcon)
   .use(i18n)
   .mount('#app');
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('/a2hs/sw.js')
+    .then(() => {
+      console.log('Service Worker Registered');
+    });
+}
