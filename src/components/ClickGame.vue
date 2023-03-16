@@ -43,7 +43,7 @@ import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from './
 
 const BIG_VAL = 3;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
-const [MINI, SMALL, MIDDLE, LARGE] = ['mini', 'small', 'middle', 'large'];
+const [TINY, MINI, SMALL, MIDDLE, LARGE] = ['tiny', 'mini', 'small', 'middle', 'large'];
 
 const neighbours = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
@@ -53,7 +53,7 @@ const audioPlay = ref(false);
 const audioRef = ref(null);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
 const maxClick = computed(() => Math.pow(difficulty.value, 2));
-const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : MINI);
+const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : difficulty.value <= 9 ? MINI : TINY);
 const bestScore = ref(localStorage.getItem(storageKey.value));
 
 let gameData, maskData;
@@ -216,7 +216,7 @@ function checkResult() {
   .game-area {
     display: inline-block;
     position: relative;
-    padding: 12px;
+    padding: 10px;
     .win,.lose {
       background-color: #f1f1f1;
       position: absolute;
@@ -287,9 +287,14 @@ function checkResult() {
       line-height: 38px;
     }
     &.cell-mini .cell .inner {
-      width: 28px;
-      height: 28px;
-      line-height: 28px;
+      width: 33px;
+      height: 33px;
+      line-height: 33px;
+    }
+    &.cell-tiny .cell .inner {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
       font-size: 13px;
     }
   }
