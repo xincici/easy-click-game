@@ -11,7 +11,8 @@
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
       {{ difficulty }}
       <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
-      <button @click="initGame" class="reset-icon">{{ i18n('start') }}</button>
+      <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
+      <button @click="autoplayGame" v-if="clickCount === 0" class="game-icon">{{ i18n('godMode') }}</button>
     </p>
     <div class="game-area" :class="`cell-${cellSize}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
@@ -25,6 +26,7 @@
         <span v-if="gameResult === NB">{{ i18n('newBest') }}</span>
       </div>
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
+      <div v-if="autoplaying" class="automask"></div>
     </div>
     <HelpDialog :help-show="helpShow" @hideHelp="helpShow = false" />
     <audio :src="audio" ref="audioRef" loop="true"></audio>
@@ -37,11 +39,12 @@ import Toggle from '@vueform/toggle';
 import '@vueform/toggle/themes/default.css';
 import audio from '../assets/yzcw.mp3';
 import HelpDialog from './HelpDialog.vue';
-import { language } from './i18n';
-import { theme } from './theme';
-import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from './difficulty';
+import { language } from '../plugins/i18n';
+import { theme } from '../utils/theme';
+import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
 
 const BIG_VAL = 3;
+const AUTO_DURATION = 500;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [TINY, MINI, SMALL, MIDDLE, LARGE] = ['tiny', 'mini', 'small', 'middle', 'large'];
 
@@ -49,6 +52,7 @@ const neighbours = [[0, 0], [-1, 0], [1, 0], [0, -1], [0, 1]];
 const clickCount = ref(0);
 const gameResult = ref(GAMING);
 const helpShow = ref(false);
+const autoplaying = ref(false);
 const audioPlay = ref(false);
 const audioRef = ref(null);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
@@ -58,9 +62,18 @@ const bestScore = ref(localStorage.getItem(storageKey.value));
 
 let gameData, maskData;
 let animationFrameId = null;
+const historyOpts = {
+  list: new Map(),
+  add: function (opt) {
+    if (!this.list.has(opt)) this.list.set(opt, 1);
+    else if (this.list.get(opt) === 1) this.list.set(opt, 2);
+    else this.list.delete(opt);
+  }
+};
 
 const randomOnce = max => [Math.floor(Math.random() * max), Math.floor(Math.random() * max)];
 const randomData = length => Array.from({ length }, () => Array.from({ length }, () => 0));
+const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 watchEffect(() => {
   bestScore.value = localStorage.getItem(storageKey.value);
@@ -81,6 +94,7 @@ function initGame() {
   maskData = reactive(randomData(difficulty.value));
   randomSomeOperations();
   gameResult.value = GAMING;
+  autoplaying.value = false;
   clickCount.value = 0;
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
@@ -88,12 +102,30 @@ function initGame() {
   }
   toggleMask(0);
 }
+async function autoplayGame() {
+  autoplaying.value = true;
+  const opts = [];
+  Array.from(historyOpts.list.keys()).forEach(item => {
+    const one = item.split(',').map(v => +v);
+    opts.push(one);
+    if (historyOpts.list.get(item) === 1) opts.push(one);
+  });
+  for (let i = 0; i < opts.length; i++) {
+    if (!autoplaying.value) return;
+    onCellClick(...opts[i]);
+    await sleep(AUTO_DURATION);
+  }
+  autoplaying.value = false;
+}
 function randomSomeOperations() {
+  historyOpts.list = new Map();
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
     const [row, col] = randomOnce(difficulty.value);
     onCellClick(row, col);
+    historyOpts.add(`${row},${col}`);
     if (Math.random() < 0.5) {
       onCellClick(row, col);
+      historyOpts.add(`${row},${col}`);
     }
   }
 }
@@ -188,7 +220,7 @@ function checkResult() {
     font-size: 20px;
     color: #cc3333;
   }
-  .opt-icon,.reset-icon {
+  .opt-icon,.game-icon {
     cursor: pointer;
     display: inline-block;
     border: 1px solid #e1e1e1;
@@ -204,9 +236,10 @@ function checkResult() {
       color: #e1e1e1;
     }
   }
-  .reset-icon {
+  .game-icon {
     margin-left: 10px;
-    width: 50px;
+    width: auto;
+    padding: 5px 8px;
     font-weight: bold;
     background: rgba(60, 160, 60, 0.9);
     color: #fff;
@@ -217,7 +250,7 @@ function checkResult() {
     display: inline-block;
     position: relative;
     padding: 10px;
-    .win,.lose {
+    .win,.lose,.automask {
       background-color: #f1f1f1;
       position: absolute;
       width: 100%;
@@ -235,6 +268,9 @@ function checkResult() {
     }
     .lose {
       color: #aa1111;
+    }
+    .automask {
+      background: rgba(255, 255, 255, 0);
     }
     .cell {
       display: inline-block;

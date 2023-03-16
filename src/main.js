@@ -12,7 +12,7 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 /* add icons to the library */
 library.add(fas);
 
-import i18n from './components/i18n';
+import i18n from './plugins/i18n';
 
 import App from './App.vue';
 
