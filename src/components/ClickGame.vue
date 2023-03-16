@@ -171,7 +171,7 @@ function checkResult() {
   .mr20 {
     margin-right: 20px;
   }
-  ::v-deep .theme-toggle .toggle-on {
+  .theme-toggle :deep(.toggle-on) {
     background: #444;
     border-color: #444;
   }

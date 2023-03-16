@@ -21,10 +21,12 @@ createApp(App)
   .use(i18n)
   .mount('#app');
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('/sw.js')
-    .then(() => {
-      console.log('Service Worker Registered');
-    });
+if (process.env.NODE_ENV === 'production') {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then(() => {
+        console.log('Service Worker Registered');
+      });
+  }
 }
