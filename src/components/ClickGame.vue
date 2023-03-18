@@ -18,7 +18,7 @@
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
           <div class="mask" v-show="maskData[idx_row][idx_col] === 0"></div>
-          <button class="inner" :class="{zero: cell === 0, one: cell === 1, two: cell === 2}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
+          <button class="inner" :class="{zero: cell === 0, one: cell === 1, two: cell === 2, clicked: autoClick[0] === idx_row && autoClick[1] === idx_col}" @click="onCellClick(idx_row, idx_col)">{{ cell }}</button>
         </div>
       </div>
       <div v-if="gameResult >= WIN" class="win">
@@ -53,6 +53,7 @@ const clickCount = ref(0);
 const gameResult = ref(GAMING);
 const helpShow = ref(false);
 const autoplaying = ref(false);
+const autoClick = reactive([-1, -1]);
 const audioPlay = ref(false);
 const audioRef = ref(null);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
@@ -110,9 +111,15 @@ async function autoplayGame() {
     opts.push(one);
     if (historyOpts.list.get(item) === 1) opts.push(one);
   });
+  opts.sort((a, b) => a[0] + a[1] - b[0] - b[1]);
   for (let i = 0; i < opts.length; i++) {
     if (!autoplaying.value) return;
     onCellClick(...opts[i]);
+    autoClick[0] = opts[i][0];
+    autoClick[1] = opts[i][1];
+    setTimeout(() => {
+      autoClick[0] = autoClick[1] = -1;
+    }, 160);
     await sleep(AUTO_DURATION);
   }
   autoplaying.value = false;
@@ -295,11 +302,15 @@ function checkResult() {
         font-weight: bold;
         background-color: #f5f5f5;
         color: #222;
+        opacity: 1;
         &.zero {
           background-color: #ddffdd;
         }
         &.two {
           background-color: #e5e5e5;
+        }
+        &.clicked {
+          opacity: 0.1;
         }
       }
     }
