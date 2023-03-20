@@ -61,8 +61,11 @@ const maxClick = computed(() => Math.pow(difficulty.value, 2));
 const cellSize = computed(() => difficulty.value <= 4 ? LARGE : difficulty.value <= 6 ? MIDDLE : difficulty.value <= 8 ? SMALL : difficulty.value <= 9 ? MINI : TINY);
 const bestScore = ref(localStorage.getItem(storageKey.value));
 
+const metaThemeColorEl = document.querySelector('meta[name="theme-color"]');
+
 let gameData, maskData;
 let animationFrameId = null;
+let lastColor = metaThemeColorEl.getAttribute('content');
 const historyOpts = {
   list: new Map(),
   add: function (opt) {
@@ -78,6 +81,14 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 watchEffect(() => {
   bestScore.value = localStorage.getItem(storageKey.value);
+});
+watch(helpShow, val => {
+  if (val) {
+    lastColor = metaThemeColorEl.getAttribute('content');
+    metaThemeColorEl.setAttribute('content', 'rgba(0,0,0,0.85)');
+  } else {
+    metaThemeColorEl.setAttribute('content', lastColor);
+  }
 });
 watch(difficulty, initGame, { immediate: true });
 watch(gameResult, val => {
