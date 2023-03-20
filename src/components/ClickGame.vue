@@ -187,7 +187,7 @@ function checkResult() {
   box-sizing: border-box;
   color: #2c3e50;
   &.dark {
-    background: rgba(0, 0, 0, 0.85);
+    background: #444;
     color: #eee;
     .game-area {
       .win,.lose {
@@ -211,8 +211,8 @@ function checkResult() {
     margin-right: 20px;
   }
   .theme-toggle :deep(.toggle-on) {
-    background: #444;
-    border-color: #444;
+    background: #222;
+    border-color: #222;
   }
   .toggle-wrapper {
     margin: 0 5%;
