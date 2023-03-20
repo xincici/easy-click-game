@@ -11,5 +11,6 @@
   ],
   "name": "Easy Click Game",
   "short_name": "ClickGame",
-  "start_url": "/"
+  "start_url": "/",
+  "id": "xincici-easy-click-game"
 }
