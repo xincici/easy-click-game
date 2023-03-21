@@ -1,5 +1,5 @@
 
-const cacheName = 'easy-click-game-v3';
+const cacheName = 'easy-click-game-v4';
 const cacheFileList = [
   '/index.html',
   '/favicon.ico',
@@ -9,6 +9,7 @@ const cacheFileList = [
 
 self.addEventListener('install', function(e) {
   console.log('[Service Worker] install');
+  self.skipWaiting();
   e.waitUntil(
     caches.open(cacheName).then(function(cache) {
       console.log('[Service Worker] Caching files');

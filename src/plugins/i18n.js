@@ -3,7 +3,7 @@ import { ref, watchEffect } from 'vue';
 const en = {
   gameTitle: 'Easy Click Game',
   bestScore: 'Best Score',
-  availableClicks: 'Avaliable Clicks',
+  availableClicks: 'Available Clicks',
   start: 'New Game',
   godMode: 'God Mode',
   helpTip: 'Click for help!',

@@ -28,5 +28,8 @@ if (process.env.NODE_ENV === 'production') {
       .then(() => {
         console.log('Service Worker Registered');
       });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    });
   }
 }
