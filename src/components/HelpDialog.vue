@@ -23,7 +23,6 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
 import { theme } from '../utils/theme';
 
 defineProps(['helpShow']);

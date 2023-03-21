@@ -130,7 +130,7 @@ async function autoplayGame() {
     autoClick[1] = opts[i][1];
     setTimeout(() => {
       autoClick[0] = autoClick[1] = -1;
-    }, 160);
+    }, 220);
     await sleep(AUTO_DURATION);
   }
   autoplaying.value = false;
