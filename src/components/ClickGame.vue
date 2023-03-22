@@ -5,14 +5,21 @@
       <Toggle v-model="theme" trueValue="dark" falseValue="light" onLabel="🌙" offLabel="🌝" class="theme-toggle mr20" />
       <Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" />
     </p>
-    <h2><span class="title">{{ i18n('gameTitle') }}</span> <span class="help" :title="i18n('helpTip')" @click="helpShow = true"><font-awesome-icon icon="fa-solid fa-circle-question" /></span></h2>
+    <h2>
+      <span class="title">{{ i18n('gameTitle') }}</span>
+      <span class="help" :title="i18n('helpTip')" @click="helpShow = true"><font-awesome-icon icon="fa-solid fa-circle-question" /></span>
+    </h2>
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <p>
-      <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">--</button>
+      <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
+        <font-awesome-icon icon="fa-solid fa-circle-minus" />
+      </button>
       {{ difficulty }}
-      <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">+</button>
+      <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">
+        <font-awesome-icon icon="fa-solid fa-circle-plus" />
+      </button>
       <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
-      <button @click="autoplayGame" v-if="clickCount === 0" class="game-icon">{{ i18n('godMode') }}</button>
+      <button @click="autoplayGame" :disabled="clickCount !== 0" class="game-icon">{{ i18n('godMode') }}</button>
     </p>
     <div class="game-area" :class="`cell-${cellSize}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
@@ -28,6 +35,14 @@
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
       <div v-if="autoplaying" class="automask"></div>
     </div>
+    <p>
+      <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
+        <font-awesome-icon icon="fa-solid fa-rotate-left" />
+      </button>
+      <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
+        <font-awesome-icon icon="fa-solid fa-rotate-right" />
+      </button>
+    </p>
     <HelpDialog :help-show="helpShow" @hideHelp="helpShow = false" />
     <audio :src="audio" ref="audioRef" loop="true"></audio>
   </div>
@@ -44,7 +59,8 @@ import { theme } from '../utils/theme';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
 
 const BIG_VAL = 3;
-const AUTO_DURATION = 500;
+const VIRTUAL_CLICK_EFFECT_DURATION = 220;
+const VIRTUAL_CLICK_WAIT_DURATION = 300;
 const [GAMING, LOSE, WIN, NB] = [0, 1, 2, 3];
 const [TINY, MINI, SMALL, MIDDLE, LARGE] = ['tiny', 'mini', 'small', 'middle', 'large'];
 
@@ -54,6 +70,8 @@ const gameResult = ref(GAMING);
 const helpShow = ref(false);
 const autoplaying = ref(false);
 const autoClick = reactive([-1, -1]);
+const userOpts = reactive([]);
+const undoIndex = ref(-1);
 const audioPlay = ref(false);
 const audioRef = ref(null);
 const storageKey = computed(() => `__easy_click_game__${difficulty.value}`);
@@ -108,6 +126,8 @@ function initGame() {
   gameResult.value = GAMING;
   autoplaying.value = false;
   clickCount.value = 0;
+  userOpts.length = 0;
+  undoIndex.value = -1;
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
     animationFrameId = null;
@@ -126,23 +146,25 @@ async function autoplayGame() {
   for (let i = 0; i < opts.length; i++) {
     if (!autoplaying.value) return;
     onCellClick(...opts[i]);
-    autoClick[0] = opts[i][0];
-    autoClick[1] = opts[i][1];
-    setTimeout(() => {
-      autoClick[0] = autoClick[1] = -1;
-    }, 220);
-    await sleep(AUTO_DURATION);
+    await virtualClick(...opts[i]);
+    await sleep(VIRTUAL_CLICK_WAIT_DURATION);
   }
   autoplaying.value = false;
+}
+async function virtualClick(row, col) {
+  autoClick[0] = row;
+  autoClick[1] = col;
+  await sleep(VIRTUAL_CLICK_EFFECT_DURATION);
+  autoClick[0] = autoClick[1] = -1;
 }
 function randomSomeOperations() {
   historyOpts.list = new Map();
   for (let i = 0; i < difficulty.value - 1 << 1; i++) {
     const [row, col] = randomOnce(difficulty.value);
-    onCellClick(row, col);
+    onCellClick(row, col, true);
     historyOpts.add(`${row},${col}`);
     if (Math.random() < 0.5) {
-      onCellClick(row, col);
+      onCellClick(row, col, true);
       historyOpts.add(`${row},${col}`);
     }
   }
@@ -165,15 +187,23 @@ function updateBestScore() {
     gameResult.value = NB;
   }
 }
-function onCellClick(row, col) {
-  clickCount.value++;
+function operateCell(row, col, diff) {
   neighbours.forEach(([iRow, iCol]) => {
     iRow += row;
     iCol += col;
     if (iRow < 0 || iRow >= difficulty.value) return;
     if (iCol < 0 || iCol >= difficulty.value) return;
-    gameData[iRow][iCol] = (gameData[iRow][iCol] + 1) % BIG_VAL;
+    gameData[iRow][iCol] = (gameData[iRow][iCol] + diff + BIG_VAL) % BIG_VAL;
   });
+}
+function onCellClick(row, col, isRandom) {
+  clickCount.value++;
+  if (!isRandom) {
+    userOpts.length = undoIndex.value + 1;
+    userOpts.push([row, col]);
+    undoIndex.value++;
+  }
+  operateCell(row, col, 1);
   checkResult();
   if (clickCount.value === maxClick.value && gameResult.value !== WIN) {
     gameResult.value = LOSE;
@@ -187,7 +217,18 @@ function checkResult() {
   }
   gameResult.value = WIN;
 }
-
+function userUndo() {
+  clickCount.value--;
+  const [row, col] = userOpts[undoIndex.value];
+  undoIndex.value--;
+  operateCell(row, col, -1);
+}
+function userRedo() {
+  clickCount.value++;
+  const [row, col] = userOpts[undoIndex.value + 1];
+  undoIndex.value++;
+  operateCell(row, col, 1);
+}
 </script>
 
 <style scoped lang="scss">
@@ -236,7 +277,8 @@ function checkResult() {
   .help {
     cursor: pointer;
     font-size: 20px;
-    color: #cc3333;
+    color: #c33;
+    margin-left: 10px;
   }
   .opt-icon,.game-icon {
     cursor: pointer;
@@ -249,20 +291,24 @@ function checkResult() {
     text-align: center;
     font-style: normal;
     font-weight: bold;
-    letter-spacing: -3px;
+    font-size: 15px;
     &.disable {
       color: #e1e1e1;
+      cursor: not-allowed;
     }
   }
   .game-icon {
     margin-left: 10px;
     width: auto;
     padding: 5px 8px;
-    font-weight: bold;
+    font-size: 14px;
     background: rgba(60, 160, 60, 0.9);
     color: #fff;
-    letter-spacing: normal;
     border: 0 none;
+    &:disabled {
+      background-color: #aaa;
+      cursor: not-allowed;
+    }
   }
   .game-area {
     display: inline-block;
@@ -324,6 +370,15 @@ function checkResult() {
           opacity: 0.1;
         }
       }
+    }
+  }
+  .undo {
+    padding: 3px 18px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    &:disabled {
+      cursor: not-allowed;
     }
   }
 }

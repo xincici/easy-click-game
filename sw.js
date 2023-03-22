@@ -1,5 +1,5 @@
 
-const cacheName = 'easy-click-game-v4';
+const cacheName = 'easy-click-game-v5';
 const cacheFileList = [
   '/index.html',
   '/favicon.ico',
