@@ -234,6 +234,7 @@ function userRedo() {
 <style scoped lang="scss">
 .wrapper {
   width: 100vw;
+  min-width: 360px;
   min-height: 100vh;
   padding: 40px 0;
   box-sizing: border-box;
@@ -256,7 +257,7 @@ function userRedo() {
       }
     }
   }
-  button {
+  button,button:disabled {
     touch-action: manipulation;
   }
   .mr20 {
@@ -288,6 +289,7 @@ function userRedo() {
     width: 25px;
     height: 30px;
     margin: 0 4px;
+    color: #222;
     text-align: center;
     font-style: normal;
     font-weight: bold;
@@ -376,8 +378,12 @@ function userRedo() {
     padding: 3px 18px;
     margin: 0 10px;
     font-size: 16px;
+    color: rgba(20, 160, 20, 0.95);
+    border: 1px solid #e1e1e1;
+    border-radius: 15px;
     cursor: pointer;
     &:disabled {
+      color: #aaa;
       cursor: not-allowed;
     }
   }
