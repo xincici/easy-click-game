@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build && cp sw.js dist/. && cp -r a2hs dist/.",
+    "build": "vue-cli-service build && node update.js && cp sw.js dist/. && cp -r a2hs dist/.",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
