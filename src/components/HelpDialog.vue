@@ -1,6 +1,9 @@
 <template>
+  <span class="help" :title="i18n('helpTip')" @click="helpShow = true">
+    <font-awesome-icon icon="fa-solid fa-circle-question" />
+  </span>
   <Teleport to="body">
-    <div class="help-wrapper" :class="theme" v-show="helpShow">
+    <div class="help-wrapper" v-show="helpShow">
       <Transition name="inner">
         <div class="help-inner" v-if="helpShow">
           <div class="help-content">
@@ -14,7 +17,7 @@
             </ul>
           </div>
           <div class="help-button">
-            <button @click="$emit('hideHelp')">{{ i18n('confirmText') }}</button>
+            <button @click="helpShow = false">{{ i18n('confirmText') }}</button>
           </div>
         </div>
       </Transition>
@@ -23,13 +26,32 @@
 </template>
 
 <script setup>
-import { theme } from '../utils/theme';
+import { ref, watch } from 'vue';
 
-defineProps(['helpShow']);
-defineEmits(['hideHelp']);
+const helpShow = ref(false);
+
+const metaThemeColorEl = document.querySelector('meta[name="theme-color"]');
+let lastColor = metaThemeColorEl.getAttribute('content');
+
+watch(helpShow, val => {
+  if (val) {
+    lastColor = metaThemeColorEl.getAttribute('content');
+    metaThemeColorEl.setAttribute('content', 'rgba(0,0,0,0.85)');
+  } else {
+    metaThemeColorEl.setAttribute('content', lastColor);
+  }
+});
 </script>
 
 <style scoped lang="scss">
+.help {
+  vertical-align: middle;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 20px;
+  color: #c33;
+  margin-left: 10px;
+}
 .inner-enter-from {
   transform: scale(0.1);
 }
