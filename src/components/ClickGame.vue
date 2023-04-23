@@ -6,7 +6,7 @@
       <HelpDialog />
     </h2>
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
-    <p>
+    <div class="opt-area">
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
         <font-awesome-icon icon="fa-solid fa-circle-minus" />
       </button>
@@ -16,7 +16,7 @@
       </button>
       <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
       <button @click="autoplayGame" :disabled="clickCount !== 0" class="game-icon">{{ i18n('godMode') }}</button>
-    </p>
+    </div>
     <div class="game-area" :class="`cell-${cellSize}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
         <div class="cell" v-for="(cell, idx_col) in item" :key="idx_col">
@@ -31,14 +31,14 @@
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
       <div v-if="autoplaying" class="automask"></div>
     </div>
-    <p>
+    <div class="opt-area">
       <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
         <font-awesome-icon icon="fa-solid fa-rotate-left" />
       </button>
       <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
         <font-awesome-icon icon="fa-solid fa-rotate-right" />
       </button>
-    </p>
+    </div>
   </div>
 </template>
 
@@ -207,7 +207,6 @@ function userRedo() {
   width: 100vw;
   min-width: 360px;
   min-height: 100vh;
-  padding: 40px 0;
   box-sizing: border-box;
   color: #2c3e50;
   &.dark {
@@ -265,6 +264,9 @@ function userRedo() {
       background-color: #aaa;
       cursor: not-allowed;
     }
+  }
+  .opt-area {
+    margin: 10px 0;
   }
   .game-area {
     display: inline-block;

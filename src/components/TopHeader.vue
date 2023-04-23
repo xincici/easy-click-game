@@ -1,10 +1,10 @@
 <template>
-  <p class="toggle-wrapper">
+  <div class="toggle-wrapper">
     <Toggle v-model="audioPlay" trueValue="play" falseValue="pause" onLabel="🔊" offLabel="🔇" class="mr20" />
     <Toggle v-model="theme" trueValue="dark" falseValue="light" onLabel="🌙" offLabel="🌝" class="theme-toggle mr20" />
     <Toggle v-model="language" trueValue="en" falseValue="cn" onLabel="EN" offLabel="中文" />
     <audio :src="audio" ref="audioRef" loop="true"></audio>
-  </p>
+  </div>
 </template>
 
 <script setup>
@@ -29,7 +29,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .toggle-wrapper {
-  margin: 0 5%;
+  padding: 15px;
   text-align: right;
   .mr20 {
     margin-right: 20px;
