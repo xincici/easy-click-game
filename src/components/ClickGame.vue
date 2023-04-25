@@ -1,10 +1,6 @@
 <template>
   <div class="wrapper" :class="theme">
     <TopHeader />
-    <h2>
-      <span class="title">{{ i18n('gameTitle') }}</span>
-      <HelpDialog />
-    </h2>
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <div class="opt-area">
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
@@ -44,7 +40,6 @@
 
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
-import HelpDialog from './HelpDialog.vue';
 import TopHeader from './TopHeader.vue';
 import { theme } from '../utils/theme';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
@@ -212,6 +207,9 @@ function userRedo() {
   &.dark {
     background: #444;
     color: #eee;
+    .header-wrapper {
+      border-bottom: 1px solid #333;
+    }
     .game-area {
       .win,.lose {
         background-color: #333;
@@ -227,12 +225,11 @@ function userRedo() {
       }
     }
   }
+  .header-wrapper {
+    border-bottom: 1px solid #eee;
+  }
   button,button:disabled {
     touch-action: manipulation;
-  }
-  .title {
-    vertical-align: middle;
-    display: inline-block;
   }
   .opt-icon,.game-icon {
     cursor: pointer;
