@@ -4,11 +4,11 @@
     <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
     <div class="opt-area">
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
-        <font-awesome-icon icon="fa-solid fa-circle-minus" />
+        <i i-carbon-subtract-alt />
       </button>
       {{ difficulty }}
       <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">
-        <font-awesome-icon icon="fa-solid fa-circle-plus" />
+        <i i-carbon-add-alt />
       </button>
       <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
       <button @click="autoplayGame" :disabled="clickCount !== 0" class="game-icon">{{ i18n('godMode') }}</button>
@@ -29,10 +29,10 @@
     </div>
     <div class="opt-area">
       <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
-        <font-awesome-icon icon="fa-solid fa-rotate-left" />
+        <i i-carbon-previous-outline />
       </button>
       <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
-        <font-awesome-icon icon="fa-solid fa-rotate-right" />
+        <i i-carbon-next-outline />
       </button>
     </div>
   </div>

@@ -1,13 +1,15 @@
 <template>
   <span class="help" :title="i18n('helpTip')" @click="helpShow = true">
-    <font-awesome-icon icon="fa-solid fa-circle-question" />
+    <i pointer i-carbon-help text-inherit />
   </span>
   <Teleport to="body">
     <div class="help-wrapper" v-show="helpShow">
       <Transition name="inner">
         <div class="help-inner" v-if="helpShow">
           <div class="help-content">
-            <p class="help-icon"><font-awesome-icon icon="fa-solid fa-circle-question" /></p>
+            <p class="help-icon">
+              <i pointer i-carbon-help text-inherit />
+            </p>
             <p class="help-text">{{ i18n('helpMsg') }}</p>
             <ul class="help-list">
               <li>1. {{ i18n('help1') }}</li>
@@ -45,12 +47,7 @@ watch(helpShow, val => {
 
 <style scoped lang="scss">
 .help {
-  vertical-align: middle;
-  display: inline-block;
-  cursor: pointer;
   font-size: 20px;
-  color: #c33;
-  margin-left: 10px;
 }
 .inner-enter-from {
   transform: scale(0.1);
@@ -78,8 +75,8 @@ watch(helpShow, val => {
     margin: 0;
     .help-icon {
       text-align: center;
-      font-size: 40px;
-      color: #e22;
+      font-size: 28px;
+      color: #fff;
     }
     .help-text {
       color: #eee;
