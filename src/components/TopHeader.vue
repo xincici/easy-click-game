@@ -4,16 +4,16 @@
       <HelpDialog />
     </span>
     <span class="item-wrapper" @click="audioPlay = !audioPlay">
-      <i class="i-carbon-pause-outline" v-if="audioPlay" />
-      <i class="i-carbon-play-outline" v-else />
+      <i i-carbon-pause-outline v-if="audioPlay" />
+      <i i-carbon-play-outline v-else />
     </span>
     <span class="title">{{ i18n('gameTitle') }}</span>
     <span class="item-wrapper" @click="toggleTheme">
-      <i class="i-carbon-moon" v-if="theme === 'dark'" />
-      <i class="i-carbon-sun" v-else />
+      <i i-carbon-moon v-if="theme === 'dark'" />
+      <i i-carbon-sun v-else />
     </span>
     <span class="item-wrapper" @click="toggleLanguage">
-      <i class="i-carbon-ibm-watson-language-translator" />
+      <i i-carbon-ibm-watson-language-translator />
     </span>
     <audio :src="audio" ref="audioRef" loop="true"></audio>
   </div>
