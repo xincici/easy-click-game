@@ -7,7 +7,8 @@ import ClickGame from './components/ClickGame.vue';
 </script>
 
 <style lang="scss">
-body {
+html, body, #app {
+  height: 100%;
   margin: 0;
 }
 #app {

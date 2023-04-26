@@ -1,7 +1,9 @@
 <template>
   <div class="wrapper" :class="theme">
     <TopHeader />
-    <p>{{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}</p>
+    <div class="score-area">
+      {{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}
+    </div>
     <div class="opt-area">
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
         <i i-carbon-subtract-alt />
@@ -228,6 +230,9 @@ function userRedo() {
   .header-wrapper {
     border-bottom: 1px solid #eee;
   }
+  .score-area {
+    margin: 50px 0 15px;
+  }
   button,button:disabled {
     touch-action: manipulation;
   }
@@ -263,7 +268,7 @@ function userRedo() {
     }
   }
   .opt-area {
-    margin: 10px 0;
+    margin: 15px 0;
   }
   .game-area {
     display: inline-block;
