@@ -9,7 +9,7 @@
     </span>
     <span class="title">{{ i18n('gameTitle') }}</span>
     <span class="item-wrapper" @click="toggleTheme">
-      <i i-carbon-moon v-if="theme === 'dark'" />
+      <i i-carbon-moon v-if="isDark" />
       <i i-carbon-sun v-else />
     </span>
     <span class="item-wrapper" @click="toggleLanguage">
@@ -25,7 +25,7 @@ import HelpDialog from './HelpDialog.vue';
 
 import audio from '../assets/yzcw.mp3';
 import { toggle as toggleLanguage } from '../plugins/i18n';
-import { theme, toggle as toggleTheme } from '../utils/theme';
+import { isDark, toggle as toggleTheme } from '../utils/theme';
 
 const audioRef = ref(null);
 const audioPlay = ref(false);

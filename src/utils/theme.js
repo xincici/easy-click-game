@@ -1,15 +1,21 @@
-import { ref, watchEffect } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 
 const STORAGE_KEY = '__easy_click_game__theme';
+const DARK = 'dark';
+const LIGHT = 'light';
+
 const themeColor = {
-  dark: '#444',
-  light: '#fff'
+  [DARK]: '#444',
+  [LIGHT]: '#fff'
 };
 
-export const theme = ref(localStorage.getItem(STORAGE_KEY) || 'light');
+export const theme = ref(localStorage.getItem(STORAGE_KEY) || LIGHT);
 
+export const isDark = computed(() => {
+  return theme.value === DARK;
+});
 export const toggle = () => {
-  theme.value = theme.value === 'dark' ? 'light' : 'dark';
+  theme.value = theme.value === DARK ? LIGHT : DARK;
 };
 
 watchEffect(() => {
