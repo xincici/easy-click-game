@@ -31,10 +31,10 @@
     </div>
     <div class="opt-area">
       <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
-        <i i-carbon-previous-outline />
+        <i i-carbon-undo />
       </button>
       <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
-        <i i-carbon-next-outline />
+        <i i-carbon-redo />
       </button>
     </div>
   </div>
