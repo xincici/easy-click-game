@@ -42,10 +42,10 @@
 
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
-import confetti from 'canvas-confetti';
 
 import TopHeader from './TopHeader.vue';
 import { theme } from '../utils/theme';
+import confetti from '../utils/confetti';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
 
 const BIG_VAL = 3;
@@ -88,10 +88,7 @@ watch(difficulty, initGame, { immediate: true });
 watch(gameResult, val => {
   if (val === WIN) {
     updateBestScore();
-    confetti({
-      particleCount: 200,
-      spread: 120
-    });
+    confetti();
   }
 });
 
