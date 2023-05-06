@@ -42,13 +42,11 @@
 
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
-import JSConfetti from 'js-confetti';
+import confetti from 'canvas-confetti';
 
 import TopHeader from './TopHeader.vue';
 import { theme } from '../utils/theme';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
-
-const jsConfetti = new JSConfetti();
 
 const BIG_VAL = 3;
 const VIRTUAL_CLICK_EFFECT_DURATION = 220;
@@ -90,7 +88,10 @@ watch(difficulty, initGame, { immediate: true });
 watch(gameResult, val => {
   if (val === WIN) {
     updateBestScore();
-    jsConfetti.addConfetti();
+    confetti({
+      particleCount: 200,
+      spread: 120
+    });
   }
 });
 
