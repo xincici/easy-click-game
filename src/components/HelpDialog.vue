@@ -30,19 +30,23 @@
 <script setup>
 import { ref, watch } from 'vue';
 
-const helpShow = ref(false);
+const STORAGE_KEY = '__easy_click_game__help_showed';
+
+const helpShow = ref(Boolean(!localStorage.getItem(STORAGE_KEY)));
 
 const metaThemeColorEl = document.querySelector('meta[name="theme-color"]');
 let lastColor = metaThemeColorEl.getAttribute('content');
 
 watch(helpShow, val => {
   if (val) {
+    localStorage.setItem(STORAGE_KEY, 1);
     lastColor = metaThemeColorEl.getAttribute('content');
     metaThemeColorEl.setAttribute('content', 'rgba(0,0,0,0.85)');
   } else {
     metaThemeColorEl.setAttribute('content', lastColor);
   }
-});
+}, { immediate: true });
+
 </script>
 
 <style scoped lang="scss">
@@ -60,6 +64,7 @@ watch(helpShow, val => {
 }
 .help-wrapper {
   position: fixed;
+  z-index: 10;
   width: 100%;
   height: 100%;
   left: 0;
