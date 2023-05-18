@@ -132,7 +132,7 @@ async function virtualClick(row, col) {
 }
 function randomSomeOperations() {
   historyOpts.list = new Map();
-  for (let i = 0; i < difficulty.value - 1 << 1; i++) {
+  for (let i = 0; i < (difficulty.value - 2) * 3; i++) {
     const [row, col] = randomOnce(difficulty.value);
     onCellClick(row, col, true);
     historyOpts.add(`${row},${col}`);
