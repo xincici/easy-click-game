@@ -2,7 +2,7 @@
   <div class="wrapper" :class="theme">
     <TopHeader />
     <div class="score-area">
-      {{ i18n('bestScore') }}: {{ bestScore || '--' }} 🍔 {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}
+      {{ i18n('bestScore') }}: {{ bestScore || '--' }} <EasterEgg @onScoreReset="onScoreReset" /> {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}
     </div>
     <div class="opt-area">
       <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
@@ -43,6 +43,7 @@
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
 
+import EasterEgg from './EasterEgg.vue';
 import TopHeader from './TopHeader.vue';
 import { theme } from '../utils/theme';
 import confetti from '../utils/confetti';
@@ -151,6 +152,9 @@ function toggleMask(idx) {
       toggleMask(idx + 1);
     });
   }
+}
+function onScoreReset() {
+  bestScore.value = null;
 }
 function updateBestScore() {
   const score = maxClick.value - clickCount.value;
