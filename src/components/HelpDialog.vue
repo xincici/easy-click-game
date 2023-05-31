@@ -99,6 +99,7 @@ watch(helpShow, val => {
         color: #fff;
         background: rgba(60, 160, 60, 0.9);
         border: 0 none;
+        border-radius: 6px;
         font-weight: bold;
       }
     }

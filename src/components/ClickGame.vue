@@ -226,6 +226,7 @@ function userRedo() {
         background-color: #333;
       }
       .cell .inner {
+        border-radius: 2px;
         background: rgba(160, 160, 160, 0.90);
         &.two {
           background: rgba(125, 125, 125, 0.90);
@@ -258,6 +259,7 @@ function userRedo() {
     font-style: normal;
     font-weight: bold;
     font-size: 15px;
+    border-radius: 6px;
     &.disable {
       color: #e1e1e1;
       cursor: not-allowed;
@@ -315,6 +317,7 @@ function userRedo() {
         position: absolute;
         z-index: 1;
         background: #ccc;
+        border-radius: 2px;
       }
       .inner {
         cursor: pointer;
@@ -347,7 +350,7 @@ function userRedo() {
     font-size: 16px;
     color: rgba(20, 160, 20, 0.95);
     border: 1px solid #e1e1e1;
-    border-radius: 15px;
+    border-radius: 10px;
     cursor: pointer;
     &:disabled {
       color: #aaa;
