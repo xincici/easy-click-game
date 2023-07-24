@@ -45,6 +45,7 @@ onMounted(() => {
   padding: 10px 8px;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid var(--border-color);
   .title {
     flex: 1;
     font-size: 18px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper" :class="theme">
+  <div class="wrapper">
     <TopHeader />
     <div class="score-area">
       {{ i18n('bestScore') }}: {{ bestScore || '--' }} <EasterEgg @onScoreReset="onScoreReset" /> {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}
@@ -45,7 +45,6 @@ import { ref, reactive, computed, watch, watchEffect } from 'vue';
 
 import EasterEgg from './EasterEgg.vue';
 import TopHeader from './TopHeader.vue';
-import { theme } from '../utils/theme';
 import confetti from '../utils/confetti';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
 
@@ -214,32 +213,8 @@ function userRedo() {
   min-width: 360px;
   min-height: 100vh;
   box-sizing: border-box;
-  color: #2c3e50;
-  &.dark {
-    background: #444;
-    color: #eee;
-    .header-wrapper {
-      border-bottom: 1px solid #333;
-    }
-    .game-area {
-      .win,.lose {
-        background-color: #333;
-      }
-      .cell .inner {
-        border-radius: 2px;
-        background: rgba(160, 160, 160, 0.90);
-        &.two {
-          background: rgba(125, 125, 125, 0.90);
-        }
-        &.zero {
-          background: rgba(210, 210, 210, 0.90);
-        }
-      }
-    }
-  }
-  .header-wrapper {
-    border-bottom: 1px solid #eee;
-  }
+  background: var(--bg-color);
+  color: var(--text-color);
   .score-area {
     margin: 50px 0 15px;
   }
@@ -249,7 +224,7 @@ function userRedo() {
   .opt-icon,.game-icon {
     cursor: pointer;
     display: inline-block;
-    border: 1px solid #e1e1e1;
+    border: 1px solid var(--border-color);
     padding: 2px;
     width: 25px;
     height: 30px;
@@ -286,7 +261,7 @@ function userRedo() {
     position: relative;
     padding: 10px;
     .win,.lose,.automask {
-      background-color: #f1f1f1;
+      background: var(--win-bg-color);
       position: absolute;
       width: 100%;
       height: 100%;
@@ -327,16 +302,17 @@ function userRedo() {
         line-height: 44px;
         padding: 0;
         border: 1px solid #e1e1e1;
+        border-radius: 2px;
         font-size: 16px;
         font-weight: bold;
-        background-color: #f5f5f5;
+        background: var(--one-bg-color);
         color: #222;
         opacity: 1;
         &.zero {
-          background-color: #ddffdd;
+          background: var(--zero-bg-color);
         }
         &.two {
-          background-color: #e5e5e5;
+          background: var(--two-bg-color);
         }
         &.clicked {
           opacity: 0.1;
@@ -349,7 +325,7 @@ function userRedo() {
     margin: 0 10px;
     font-size: 16px;
     color: rgba(20, 160, 20, 0.95);
-    border: 1px solid #e1e1e1;
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     cursor: pointer;
     &:disabled {
