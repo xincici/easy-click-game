@@ -261,15 +261,15 @@ function userRedo() {
     position: relative;
     padding: 10px;
     .win,.lose,.automask {
-      background: var(--win-bg-color);
+      background: var(--bg-color);
       position: absolute;
       width: 100%;
       height: 100%;
       left: 0;
       top: 0;
-      opacity: 0.95;
+      opacity: 0.85;
       font-weight: bold;
-      color: #11aa11;
+      color: #1b1;
       font-size: 18px;
       display: flex;
       flex-direction: column;
@@ -277,7 +277,7 @@ function userRedo() {
       justify-content: center;
     }
     .lose {
-      color: #aa1111;
+      color: #b11;
     }
     .automask {
       background: rgba(255, 255, 255, 0);

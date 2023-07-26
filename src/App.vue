@@ -22,7 +22,6 @@ body {
   --text-color: #2c3e50;
   --bg-color: #fff;
   --mask-color: rgba(255, 255, 255, 0.8);
-  --win-bg-color: #f1f1f1;
   --zero-bg-color: #ddffdd;
   --one-bg-color: #f5f5f5;
   --two-bg-color: #e5e5e5;
@@ -31,7 +30,6 @@ body {
     --text-color: #eee;
     --bg-color: #333;
     --mask-color: rgba(20, 20, 20, 0.8);
-    --win-bg-color: #333;
     --zero-bg-color: rgba(210, 210, 210, 0.90);
     --one-bg-color: rgba(160, 160, 160, 0.90);
     --two-bg-color: rgba(125, 125, 125, 0.90);
