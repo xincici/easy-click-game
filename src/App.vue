@@ -29,7 +29,7 @@ body {
     --border-color: #444;
     --text-color: #eee;
     --bg-color: #333;
-    --mask-color: rgba(20, 20, 20, 0.8);
+    --mask-color: rgba(51, 51, 51, 0.8);
     --zero-bg-color: rgba(210, 210, 210, 0.90);
     --one-bg-color: rgba(160, 160, 160, 0.90);
     --two-bg-color: rgba(125, 125, 125, 0.90);

@@ -261,13 +261,12 @@ function userRedo() {
     position: relative;
     padding: 10px;
     .win,.lose,.automask {
-      background: var(--bg-color);
+      background: var(--mask-color);
       position: absolute;
       width: 100%;
       height: 100%;
       left: 0;
       top: 0;
-      opacity: 0.85;
       font-weight: bold;
       color: #1b1;
       font-size: 18px;
