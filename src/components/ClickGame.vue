@@ -216,7 +216,7 @@ function userRedo() {
   background: var(--bg-color);
   color: var(--text-color);
   .score-area {
-    margin: 50px 0 15px;
+    padding: 100px 0 15px;
   }
   button,button:disabled {
     touch-action: manipulation;

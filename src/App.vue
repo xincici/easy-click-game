@@ -8,8 +8,9 @@ import ClickGame from './components/ClickGame.vue';
 
 <style lang="scss">
 html, body, #app {
-  height: 100%;
+  height: 100vh;
   margin: 0;
+  touch-action: manipulation;
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
