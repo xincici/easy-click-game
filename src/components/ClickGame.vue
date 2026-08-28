@@ -413,19 +413,25 @@ function userRedo() {
       gap: 8px;
       width: 100%;
       max-width: 160px;
-      padding: 12px 16px;
-      font-size: 15px;
+      padding: 8px 16px;
+      font-size: 14px;
       font-weight: bold;
       color: var(--text-color);
       background: transparent;
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      transition: background-color 0.15s;
+      transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+      &:not(:disabled) {
+        color: #3ca03c;
+        border-color: rgba(60, 160, 60, 0.6);
+        background: rgba(60, 160, 60, 0.1);
+      }
       &:not(:disabled):active {
-        background: var(--one-bg-color);
+        background: rgba(60, 160, 60, 0.25);
       }
       &:disabled {
-        opacity: 0.35;
+        opacity: 0.5;
+        border-color: var(--text-color);
         cursor: not-allowed;
       }
     }
