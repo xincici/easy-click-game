@@ -18,7 +18,8 @@ Find a way to make all the numbers become 0 to win the game. If there are no mor
   tipWin: 'You Win',
   tipLost: 'You Lose',
   undo: 'Undo',
-  redo: 'Redo'
+  redo: 'Redo',
+  rotateTip: 'Please rotate your device to portrait'
 };
 const cn = {
   gameTitle: '点击游戏',
@@ -38,7 +39,8 @@ const cn = {
   tipWin: '你赢了',
   tipLost: '你输了',
   undo: '上一步',
-  redo: '下一步'
+  redo: '下一步',
+  rotateTip: '请旋转设备至竖屏'
 };
 const STORAGE_KEY = '__easy_click_game__language';
 
