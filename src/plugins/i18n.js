@@ -16,7 +16,9 @@ Find a way to make all the numbers become 0 to win the game. If there are no mor
   confirmText: 'OK, I See',
   newBest: 'New Best Score',
   tipWin: 'You Win',
-  tipLost: 'You Lose'
+  tipLost: 'You Lose',
+  undo: 'Undo',
+  redo: 'Redo'
 };
 const cn = {
   gameTitle: '点击游戏',
@@ -34,7 +36,9 @@ const cn = {
   confirmText: '好的，明白',
   newBest: '新纪录诞生',
   tipWin: '你赢了',
-  tipLost: '你输了'
+  tipLost: '你输了',
+  undo: '上一步',
+  redo: '下一步'
 };
 const STORAGE_KEY = '__easy_click_game__language';
 

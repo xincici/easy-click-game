@@ -7,7 +7,7 @@
       <i i-carbon-pause-outline v-if="audioPlay" />
       <i i-carbon-play-outline v-else />
     </span>
-    <span class="title">{{ i18n('gameTitle') }}</span>
+    <span class="title" @click="onTitleClick">{{ i18n('gameTitle') }}</span>
     <span class="item-wrapper" @click="toggleTheme">
       <i i-carbon-moon v-if="isDark" />
       <i i-carbon-sun v-else />
@@ -20,21 +20,49 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import HelpDialog from './HelpDialog.vue';
 
 import audio from '../assets/yzcw.mp3';
 import { toggle as toggleLanguage } from '../plugins/i18n';
 import { isDark, toggle as toggleTheme } from '../utils/theme';
+import { MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
+
+const emit = defineEmits(['onScoreReset']);
 
 const audioRef = ref(null);
 const audioPlay = ref(false);
+const titleClicks = ref(0);
+const recordsPrefix = '__easy_click_game__';
+
+function onTitleClick() {
+  titleClicks.value++;
+  if (titleClicks.value === 5) {
+    removeRecords();
+    emit('onScoreReset');
+  }
+}
+
+function removeRecords() {
+  for (let i = MIN_DIFFICULTY; i <= MAX_DIFFICULTY; i++) {
+    localStorage.removeItem(`${recordsPrefix}${i}`);
+  }
+}
+
+function onBodyClick() {
+  titleClicks.value = 0;
+}
 
 onMounted(() => {
   watch(audioPlay, val => {
     if (val) audioRef.value.play();
     else audioRef.value.pause();
   });
+  document.body.addEventListener('click', onBodyClick);
+});
+
+onUnmounted(() => {
+  document.body.removeEventListener('click', onBodyClick);
 });
 </script>
 

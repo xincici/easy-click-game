@@ -1,19 +1,35 @@
 <template>
   <div class="wrapper">
-    <TopHeader />
-    <div class="score-area">
-      {{ i18n('bestScore') }}: {{ bestScore || '--' }} <EasterEgg @onScoreReset="onScoreReset" /> {{ i18n('availableClicks') }}: {{ maxClick - clickCount }}
+    <TopHeader @onScoreReset="onScoreReset" />
+    <div class="card score-card">
+      <div class="score-item">
+        <span class="label">{{ i18n('bestScore') }}</span>
+        <span class="value">{{ bestScore || '--' }}</span>
+      </div>
+      <div class="divider"></div>
+      <div class="score-item">
+        <span class="label">{{ i18n('availableClicks') }}</span>
+        <span class="value">{{ maxClick - clickCount }}</span>
+      </div>
     </div>
-    <div class="opt-area">
-      <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
-        <i i-carbon-subtract-alt />
-      </button>
-      {{ difficulty }}
-      <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">
-        <i i-carbon-add-alt />
-      </button>
-      <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
-      <button @click="autoplayGame" :disabled="clickCount !== 0" class="game-icon">{{ i18n('godMode') }}</button>
+    <div class="card opt-card">
+      <div class="opt-item">
+        <button @click="changeDifficulty(-1)" class="opt-icon" :class="{disable: difficulty === MIN_DIFFICULTY}">
+          <i i-carbon-subtract-alt />
+        </button>
+        <span class="difficulty-num">{{ difficulty }}</span>
+        <button @click="changeDifficulty(1)" class="opt-icon" :class="{disable: difficulty === MAX_DIFFICULTY}">
+          <i i-carbon-add-alt />
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="opt-item">
+        <button @click="initGame" class="game-icon">{{ i18n('start') }}</button>
+      </div>
+      <div class="divider"></div>
+      <div class="opt-item">
+        <button @click="autoplayGame" :disabled="clickCount !== 0" class="game-icon">{{ i18n('godMode') }}</button>
+      </div>
     </div>
     <div class="game-area" :class="`cell-${cellSize}`">
       <div v-for="(item, idx_row) in gameData" :key="idx_row">
@@ -29,13 +45,20 @@
       <div v-if="gameResult === LOSE" class="lose">👻👻 {{ i18n('tipLost') }} 👻👻</div>
       <div v-if="autoplaying" class="automask"></div>
     </div>
-    <div class="opt-area">
-      <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
-        <i i-carbon-undo />
-      </button>
-      <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
-        <i i-carbon-redo />
-      </button>
+    <div class="card undo-card">
+      <div class="undo-item">
+        <button class="undo" @click="userUndo" :disabled="undoIndex < 0 || gameResult !== GAMING || autoplaying">
+          <i i-carbon-undo />
+          <span>{{ i18n('undo') }}</span>
+        </button>
+      </div>
+      <div class="divider"></div>
+      <div class="undo-item">
+        <button class="undo" @click="userRedo" :disabled="undoIndex === userOpts.length - 1 || gameResult !== GAMING || autoplaying">
+          <i i-carbon-redo />
+          <span>{{ i18n('redo') }}</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +66,6 @@
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
 
-import EasterEgg from './EasterEgg.vue';
 import TopHeader from './TopHeader.vue';
 import confetti from '../utils/confetti';
 import { difficulty, changeDifficulty, MIN_DIFFICULTY, MAX_DIFFICULTY } from '../utils/difficulty';
@@ -215,51 +237,105 @@ function userRedo() {
   box-sizing: border-box;
   background: var(--bg-color);
   color: var(--text-color);
-  .score-area {
-    padding: 100px 0 15px;
+  .card {
+    width: calc(100% - 24px);
+    max-width: 480px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+  }
+  .divider {
+    width: 1px;
+    align-self: stretch;
+    margin: 10px 0;
+    background: var(--border-color);
   }
   button,button:disabled {
     touch-action: manipulation;
   }
-  .opt-icon,.game-icon {
+  .score-card {
+    display: flex;
+    align-items: center;
+    margin-top: 70px;
+    .score-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      padding: 14px 8px;
+      .label {
+        font-size: 13px;
+        opacity: 0.6;
+      }
+      .value {
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 1.2;
+      }
+    }
+  }
+  .opt-card {
+    display: flex;
+    align-items: center;
+    margin: 12px auto;
+    .opt-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 4px;
+    }
+    .difficulty-num {
+      min-width: 22px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+  .opt-icon {
     cursor: pointer;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
     border: 1px solid var(--border-color);
-    padding: 2px;
-    width: 25px;
-    height: 30px;
-    margin: 0 4px;
-    color: #222;
-    text-align: center;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 15px;
-    border-radius: 6px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-color);
+    font-size: 16px;
     &.disable {
-      color: #e1e1e1;
+      opacity: 0.35;
       cursor: not-allowed;
     }
   }
   .game-icon {
-    margin-left: 10px;
-    width: auto;
-    padding: 5px 8px;
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px 14px;
     font-size: 14px;
+    font-weight: bold;
     background: rgba(60, 160, 60, 0.9);
     color: #fff;
     border: 0 none;
+    border-radius: 999px;
     &:disabled {
       background-color: #aaa;
       cursor: not-allowed;
     }
   }
-  .opt-area {
-    margin: 15px 0;
-  }
   .game-area {
     display: inline-block;
     position: relative;
     padding: 10px;
+    margin: 12px 0;
     .win,.lose,.automask {
       background: var(--mask-color);
       position: absolute;
@@ -319,17 +395,40 @@ function userRedo() {
       }
     }
   }
-  .undo {
-    padding: 3px 18px;
-    margin: 0 10px;
-    font-size: 16px;
-    color: rgba(20, 160, 20, 0.95);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    cursor: pointer;
-    &:disabled {
-      color: #aaa;
-      cursor: not-allowed;
+  .undo-card {
+    display: flex;
+    align-items: stretch;
+    margin: 12px auto;
+    .undo-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+    .undo {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      max-width: 160px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--text-color);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      transition: background-color 0.15s;
+      &:not(:disabled):active {
+        background: var(--one-bg-color);
+      }
+      &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
     }
   }
 }
