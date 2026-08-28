@@ -8,8 +8,6 @@ import ClickGame from './components/ClickGame.vue';
 
 <style lang="scss">
 html, body, #app {
-  height: 100vh;
-  height: 100dvh;
   margin: 0;
   touch-action: manipulation;
   overscroll-behavior-y: none;
