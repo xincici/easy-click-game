@@ -234,6 +234,7 @@ function userRedo() {
   width: 100vw;
   min-width: 360px;
   min-height: 100vh;
+  min-height: 100dvh;
   box-sizing: border-box;
   background: var(--bg-color);
   color: var(--text-color);
