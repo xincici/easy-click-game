@@ -330,7 +330,7 @@ function userRedo() {
     background: rgba(60, 160, 60, 0.9);
     color: #fff;
     border: 0 none;
-    border-radius: 999px;
+    border-radius: 8px;
     &:disabled {
       background-color: #aaa;
       cursor: not-allowed;
