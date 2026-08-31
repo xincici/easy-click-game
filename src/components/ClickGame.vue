@@ -289,6 +289,12 @@ function userRedo() {
       justify-content: center;
       gap: 8px;
       padding: 10px 4px;
+      &:first-child {
+        flex: 3;
+      }
+      &:not(:first-child) {
+        flex: 3.5;
+      }
     }
     .difficulty-num {
       min-width: 22px;
@@ -302,16 +308,16 @@ function userRedo() {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     padding: 0;
     border: 1px solid var(--border-color);
-    border-radius: 50%;
-    background: transparent;
+    border-radius: 8px;
+    background: var(--card-bg-color);
     color: var(--text-color);
-    font-size: 16px;
+    font-size: 15px;
     &.disable {
-      opacity: 0.35;
+      color: var(--border-color);
       cursor: not-allowed;
     }
   }
