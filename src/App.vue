@@ -15,6 +15,11 @@ html, body, #app {
   margin: 0;
   touch-action: manipulation;
   overscroll-behavior-y: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #app {
